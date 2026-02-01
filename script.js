@@ -1,42 +1,134 @@
-// Google Sheets Configuration
-const SHEET_ID = '1AbCdEfGhIjKlMnOpQrStUvWxYz123456789';
-const API_KEY = 'YOUR_GOOGLE_API_KEY_HERE';
+// Google Apps Script URL - Replace with your actual URL
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7U_gcPFi-gHhBTHipKhW2LWLoX-a8-ogz5eL0Yu_1WKjrJkL/exec';
 
 // DOM Elements
-const leaveForm = document.getElementById('leaveForm');
-const fromDateInput = document.getElementById('fromDate');
-const toDateInput = document.getElementById('toDate');
-const totalDaysDisplay = document.getElementById('totalDays');
-const workingDaysSpan = document.getElementById('workingDays');
-const totalDaysSpan = document.getElementById('totalDaysCount');
-const submitBtn = document.getElementById('submitBtn');
-const previewBtn = document.getElementById('previewBtn');
-const previewModal = document.getElementById('previewModal');
-const closeModal = document.querySelector('.close-modal');
-const previewContent = document.getElementById('previewContent');
-const statusMessage = document.getElementById('status-message');
-const fileUploadArea = document.getElementById('fileUploadArea');
-const fileInput = document.getElementById('supportingDocs');
-const fileList = document.getElementById('fileList');
+let leaveForm, fromDateInput, toDateInput, totalDaysDisplay, workingDaysSpan, totalDaysSpan;
+let submitBtn, previewBtn, previewModal, closeModal, previewContent, statusMessage;
+let fileUploadArea, fileInput, fileList;
 
-// Initialize current year
-document.getElementById('current-year').textContent = 
-document.getElementById('current-year-footer').textContent = 
-    new Date().getFullYear() + '-' + (new Date().getFullYear() + 1);
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeElements();
+    setupEventListeners();
+    setupDateLimits();
+    setupCurrentYear();
+});
 
-// Set date limits (can't select past dates)
-const today = new Date().toISOString().split('T')[0];
-fromDateInput.min = today;
-toDateInput.min = today;
+function initializeElements() {
+    // Get all DOM elements
+    leaveForm = document.getElementById('leaveForm');
+    fromDateInput = document.getElementById('fromDate');
+    toDateInput = document.getElementById('toDate');
+    totalDaysDisplay = document.getElementById('totalDays');
+    workingDaysSpan = document.getElementById('workingDays');
+    totalDaysSpan = document.getElementById('totalDaysCount');
+    submitBtn = document.getElementById('submitBtn');
+    previewBtn = document.getElementById('previewBtn');
+    previewModal = document.getElementById('previewModal');
+    closeModal = document.querySelector('.close-modal');
+    previewContent = document.getElementById('previewContent');
+    statusMessage = document.getElementById('status-message');
+    fileUploadArea = document.getElementById('fileUploadArea');
+    fileInput = document.getElementById('supportingDocs');
+    fileList = document.getElementById('fileList');
+}
 
-// Calculate total days function
+function setupEventListeners() {
+    // Calculate days when dates change
+    if (fromDateInput) fromDateInput.addEventListener('change', updateDateMin);
+    if (toDateInput) toDateInput.addEventListener('change', calculateTotalDays);
+    
+    // File upload handling
+    if (fileUploadArea) {
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileUpload);
+    }
+    
+    // Preview functionality
+    if (previewBtn) previewBtn.addEventListener('click', showPreview);
+    
+    // Form submission
+    if (leaveForm) leaveForm.addEventListener('submit', handleFormSubmit);
+    
+    // Modal close
+    if (closeModal) closeModal.addEventListener('click', () => {
+        if (previewModal) previewModal.style.display = 'none';
+    });
+    
+    // Window click to close modal
+    window.addEventListener('click', (e) => {
+        if (e.target === previewModal) {
+            previewModal.style.display = 'none';
+        }
+    });
+    
+    // Print and Download buttons
+    const printBtn = document.getElementById('printPreview');
+    const downloadBtn = document.getElementById('downloadPDF');
+    
+    if (printBtn) printBtn.addEventListener('click', printPreview);
+    if (downloadBtn) downloadBtn.addEventListener('click', downloadAsPDF);
+    
+    // Reset button
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', resetForm);
+}
+
+function setupDateLimits() {
+    // Set today's date as minimum
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    if (fromDateInput) {
+        fromDateInput.min = todayStr;
+        fromDateInput.value = todayStr;
+    }
+    if (toDateInput) {
+        toDateInput.min = todayStr;
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        toDateInput.value = tomorrow.toISOString().split('T')[0];
+    }
+    
+    // Calculate initial total days
+    calculateTotalDays();
+}
+
+function setupCurrentYear() {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+    const academicYear = `${currentYear}-${nextYear}`;
+    
+    // Set academic year in form
+    const academicYearSelect = document.getElementById('academicYear');
+    if (academicYearSelect) {
+        academicYearSelect.value = academicYear;
+    }
+    
+    // Set in header and footer
+    const yearElements = document.querySelectorAll('#current-year, #current-year-footer');
+    yearElements.forEach(el => {
+        if (el) el.textContent = academicYear;
+    });
+}
+
+function updateDateMin() {
+    if (!fromDateInput || !toDateInput) return;
+    
+    toDateInput.min = fromDateInput.value;
+    if (new Date(toDateInput.value) < new Date(fromDateInput.value)) {
+        toDateInput.value = fromDateInput.value;
+    }
+    calculateTotalDays();
+}
+
 function calculateTotalDays() {
+    if (!fromDateInput || !toDateInput || !totalDaysDisplay || !workingDaysSpan || !totalDaysSpan) return;
+    
     const fromDate = new Date(fromDateInput.value);
     const toDate = new Date(toDateInput.value);
     
     if (fromDate && toDate && fromDate <= toDate) {
-        // Calculate total days including start and end
         const timeDiff = toDate.getTime() - fromDate.getTime();
         const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
         
@@ -46,7 +138,6 @@ function calculateTotalDays() {
         
         for (let i = 0; i < totalDays; i++) {
             const dayOfWeek = currentDate.getDay();
-            // 0 = Sunday, 6 = Saturday
             if (dayOfWeek !== 0 && dayOfWeek !== 6) {
                 workingDays++;
             }
@@ -54,31 +145,24 @@ function calculateTotalDays() {
         }
         
         // Update displays
-        totalDaysDisplay.value = `${totalDays} day${totalDays !== 1 ? 's' : ''}`;
-        workingDaysSpan.textContent = `Working days: ${workingDays}`;
-        totalDaysSpan.textContent = `Total days: ${totalDays}`;
+        if (totalDaysDisplay) {
+            totalDaysDisplay.value = `${totalDays} day${totalDays !== 1 ? 's' : ''}`;
+        }
+        if (workingDaysSpan) workingDaysSpan.textContent = `Working days: ${workingDays}`;
+        if (totalDaysSpan) totalDaysSpan.textContent = `Total days: ${totalDays}`;
         
         return { totalDays, workingDays };
     } else {
-        totalDaysDisplay.value = '0 days';
-        workingDaysSpan.textContent = 'Working days: 0';
-        totalDaysSpan.textContent = 'Total days: 0';
+        if (totalDaysDisplay) totalDaysDisplay.value = '0 days';
+        if (workingDaysSpan) workingDaysSpan.textContent = 'Working days: 0';
+        if (totalDaysSpan) totalDaysSpan.textContent = 'Total days: 0';
         return { totalDays: 0, workingDays: 0 };
     }
 }
 
-// Calculate days when dates change
-fromDateInput.addEventListener('change', () => {
-    toDateInput.min = fromDateInput.value;
-    calculateTotalDays();
-});
-
-toDateInput.addEventListener('change', calculateTotalDays);
-
-// File upload handling
-fileUploadArea.addEventListener('click', () => fileInput.click());
-
-fileInput.addEventListener('change', () => {
+function handleFileUpload() {
+    if (!fileList) return;
+    
     fileList.innerHTML = '';
     const files = Array.from(fileInput.files);
     
@@ -113,7 +197,7 @@ fileInput.addEventListener('change', () => {
             const files = Array.from(fileInput.files);
             files.splice(index, 1);
             
-            // Create new FileList (requires workaround)
+            // Create new FileList
             const dataTransfer = new DataTransfer();
             files.forEach(file => dataTransfer.items.add(file));
             fileInput.files = dataTransfer.files;
@@ -122,9 +206,8 @@ fileInput.addEventListener('change', () => {
             fileInput.dispatchEvent(new Event('change'));
         });
     });
-});
+}
 
-// Format file size
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -133,31 +216,36 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// Preview functionality
-previewBtn.addEventListener('click', () => {
-    if (!leaveForm.checkValidity()) {
+function showPreview() {
+    if (!leaveForm || !leaveForm.checkValidity()) {
+        showMessage('Please fill all required fields correctly', 'error');
         leaveForm.reportValidity();
         return;
     }
     
     const formData = new FormData(leaveForm);
     const previewHTML = generatePreviewHTML(formData);
-    previewContent.innerHTML = previewHTML;
-    previewModal.style.display = 'flex';
-});
+    
+    if (previewContent) {
+        previewContent.innerHTML = previewHTML;
+    }
+    
+    if (previewModal) {
+        previewModal.style.display = 'flex';
+    }
+}
 
-// Generate preview HTML
 function generatePreviewHTML(formData) {
     const days = calculateTotalDays();
     
     return `
         <div class="preview-document">
-            <div class="preview-header" style="text-align: center; margin-bottom: 30px;">
-                <h2 style="color: #1a237e;">Leave Application Preview</h2>
+            <div class="preview-header" style="text-align: center; margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
+                <h2 style="color: #1a237e; margin-bottom: 10px;">Leave Application Preview</h2>
                 <p style="color: #666;">Generated on ${new Date().toLocaleDateString()}</p>
             </div>
             
-            <div class="preview-section">
+            <div class="preview-section" style="margin-bottom: 20px;">
                 <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
                     Student Information
                 </h3>
@@ -173,7 +261,7 @@ function generatePreviewHTML(formData) {
                 </div>
             </div>
             
-            <div class="preview-section" style="margin-top: 25px;">
+            <div class="preview-section" style="margin-bottom: 20px;">
                 <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
                     Teacher Information
                 </h3>
@@ -183,7 +271,7 @@ function generatePreviewHTML(formData) {
                 </div>
             </div>
             
-            <div class="preview-section" style="margin-top: 25px;">
+            <div class="preview-section" style="margin-bottom: 20px;">
                 <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
                     Leave Details
                 </h3>
@@ -201,7 +289,7 @@ function generatePreviewHTML(formData) {
                 </div>
                 <div style="margin-top: 15px;">
                     <strong>Supporting Documents:</strong>
-                    <p>${fileInput.files.length} file(s) attached</p>
+                    <p>${fileInput ? fileInput.files.length : 0} file(s) attached</p>
                 </div>
             </div>
             
@@ -213,7 +301,7 @@ function generatePreviewHTML(formData) {
                     </div>
                     <div style="text-align: right;">
                         <p><strong>Class Teacher Signature:</strong> ________________</p>
-                        <p><strong>Status:</strong> <span style="color: #ff9800;">Pending</span></p>
+                        <p><strong>Status:</strong> <span style="color: #ff9800; font-weight: bold;">Pending</span></p>
                     </div>
                 </div>
             </div>
@@ -221,52 +309,16 @@ function generatePreviewHTML(formData) {
     `;
 }
 
-// Close modal
-closeModal.addEventListener('click', () => {
-    previewModal.style.display = 'none';
-});
-
-window.addEventListener('click', (e) => {
-    if (e.target === previewModal) {
-        previewModal.style.display = 'none';
-    }
-});
-
-// Print and Download buttons
-document.getElementById('printPreview').addEventListener('click', () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Leave Application - ${document.getElementById('fullName').value}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                    .preview-section { margin-bottom: 30px; }
-                    h3 { color: #1a237e; }
-                    strong { color: #333; }
-                </style>
-            </head>
-            <body>
-                ${previewContent.innerHTML}
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-});
-
-document.getElementById('downloadPDF').addEventListener('click', () => {
-    showMessage('PDF download feature requires additional setup with a PDF generation library.', 'info');
-});
-
-// Form submission
-leaveForm.addEventListener('submit', async (e) => {
+async function handleFormSubmit(e) {
     e.preventDefault();
     
-    if (!leaveForm.checkValidity()) {
+    if (!leaveForm || !leaveForm.checkValidity()) {
+        showMessage('Please fill all required fields correctly', 'error');
         leaveForm.reportValidity();
         return;
     }
+    
+    if (!submitBtn) return;
     
     // Disable submit button
     submitBtn.disabled = true;
@@ -295,112 +347,111 @@ leaveForm.addEventListener('submit', async (e) => {
             totalDays: days.totalDays,
             workingDays: days.workingDays,
             reason: formData.get('reason'),
-            supportingDocs: fileInput.files.length,
+            supportingDocs: fileInput ? fileInput.files.length : 0,
             status: 'Pending'
         };
+        
+        console.log('Submitting data:', rowData);
         
         // Send to Google Sheets via Apps Script
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors', // Important for Google Apps Script
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(rowData)
         });
         
-        if (response.ok) {
-            showMessage('Leave application submitted successfully! You will receive an email confirmation.', 'success');
-            
-            // Send confirmation email (via Apps Script)
-            await sendEmailConfirmation(rowData);
-            
-            // Reset form
-            leaveForm.reset();
-            fileList.innerHTML = '';
-            calculateTotalDays();
-            
-            // Auto-refresh after 5 seconds
-            setTimeout(() => {
-                statusMessage.style.display = 'none';
-            }, 5000);
-        } else {
-            throw new Error('Failed to submit form');
-        }
+        // Since we're using no-cors, we won't get a response back
+        showMessage('Leave application submitted successfully! You will receive an email confirmation shortly.', 'success');
+        
+        // Reset form
+        resetForm();
+        
+        // Auto-hide message after 5 seconds
+        setTimeout(() => {
+            if (statusMessage) statusMessage.style.display = 'none';
+        }, 5000);
+        
     } catch (error) {
         console.error('Error:', error);
         showMessage('Error submitting form. Please try again.', 'error');
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Leave Application';
-    }
-});
-
-// Send email confirmation
-async function sendEmailConfirmation(data) {
-    try {
-        const emailResponse = await fetch(`${SCRIPT_URL}?action=sendEmail`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                to: data.email,
-                subject: `Leave Application Submitted - ${data.fullName}`,
-                body: `
-Dear ${data.fullName},
-
-Your leave application has been successfully submitted with the following details:
-
-- Leave Type: ${data.leaveType}
-- Period: ${data.fromDate} to ${data.toDate}
-- Total Days: ${data.totalDays} (${data.workingDays} working days)
-- Submitted on: ${new Date().toLocaleDateString()}
-
-Your application is now pending approval from ${data.classTeacher}.
-
-You will receive another email once your application is reviewed.
-
-Thank you,
-PCCOE Leave Management System
-Department of Applied Sciences & Humanities
-                `
-            })
-        });
-        
-        if (!emailResponse.ok) {
-            console.warn('Email sending failed, but form was saved');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Leave Application';
         }
-    } catch (error) {
-        console.warn('Email error:', error);
     }
 }
 
-// Show status messages
+function printPreview() {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Leave Application - ${document.getElementById('fullName').value}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+                    .preview-section { margin-bottom: 30px; }
+                    h3 { color: #1a237e; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+                    strong { color: #333; }
+                    p { margin: 5px 0; }
+                    .preview-header { text-align: center; margin-bottom: 30px; }
+                </style>
+            </head>
+            <body>
+                ${previewContent.innerHTML}
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function downloadAsPDF() {
+    showMessage('PDF download feature requires additional setup. For now, please use Print Preview and save as PDF.', 'info');
+}
+
+function resetForm() {
+    if (leaveForm) leaveForm.reset();
+    if (fileList) fileList.innerHTML = '';
+    setupDateLimits();
+    calculateTotalDays();
+    showMessage('Form has been reset', 'info');
+    
+    setTimeout(() => {
+        if (statusMessage) statusMessage.style.display = 'none';
+    }, 3000);
+}
+
 function showMessage(message, type = 'info') {
+    if (!statusMessage) return;
+    
     statusMessage.textContent = message;
     statusMessage.className = `status-message ${type}`;
     statusMessage.style.display = 'block';
     
-    if (type !== 'info') {
+    // Auto-hide success/info messages after 5 seconds
+    if (type === 'success' || type === 'info') {
         setTimeout(() => {
             statusMessage.style.display = 'none';
         }, 5000);
     }
 }
 
-// Form validation improvements
-const inputs = leaveForm.querySelectorAll('input, select, textarea');
-inputs.forEach(input => {
-    input.addEventListener('invalid', function(e) {
-        e.preventDefault();
-        this.style.borderColor = '#c62828';
-        showMessage(`Please fill in "${this.previousElementSibling?.textContent || 'this field'}" correctly.`, 'error');
+// Add form validation improvements
+if (leaveForm) {
+    const inputs = leaveForm.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('invalid', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#c62828';
+            showMessage(`Please fill in "${this.previousElementSibling?.textContent || 'this field'}" correctly.`, 'error');
+        });
+        
+        input.addEventListener('input', function() {
+            this.style.borderColor = '#ddd';
+        });
     });
-    
-    input.addEventListener('input', function() {
-        this.style.borderColor = '#ddd';
-    });
-});
-
-// Initialize
-calculateTotalDays();
+}

@@ -5,6 +5,9 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7
 let leaveForm, fromDateInput, toDateInput, totalDaysDisplay, workingDaysSpan, totalDaysSpan;
 let submitBtn, previewBtn, previewModal, closeModal, previewContent, statusMessage;
 
+// Initialize jsPDF
+window.jsPDF = window.jspdf.jsPDF;
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
@@ -324,12 +327,24 @@ function showPreview() {
 
 function generatePreviewHTML(formData) {
     const days = calculateTotalDays();
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+    
+    // Extract teacher name without division
+    const classTeacherFull = formData.get('classTeacher') || '';
+    const classTeacherName = classTeacherFull.split(' (')[0] || classTeacherFull;
+    
+    // Extract student name
+    const studentName = formData.get('fullName') || '';
     
     return `
         <div class="preview-document">
             <div class="preview-header" style="text-align: center; margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
                 <h2 style="color: #1a237e; margin-bottom: 10px;">Leave Application Preview</h2>
-                <p style="color: #666;">Generated on ${new Date().toLocaleDateString()}</p>
+                <p style="color: #666;">Generated on ${currentDate}</p>
             </div>
             
             <div class="preview-section" style="margin-bottom: 20px;">
@@ -340,7 +355,7 @@ function generatePreviewHTML(formData) {
                     <div><strong>Academic Year:</strong> ${formData.get('academicYear')}</div>
                     <div><strong>Semester:</strong> ${formData.get('semester')}</div>
                     <div><strong>PRN:</strong> ${formData.get('prn')}</div>
-                    <div><strong>Full Name:</strong> ${formData.get('fullName')}</div>
+                    <div><strong>Full Name:</strong> ${studentName}</div>
                     <div><strong>Division:</strong> ${formData.get('division')}</div>
                     <div><strong>Branch:</strong> ${formData.get('branch')}</div>
                     <div><strong>Email:</strong> ${formData.get('email')}</div>
@@ -377,14 +392,19 @@ function generatePreviewHTML(formData) {
             </div>
             
             <div class="preview-footer" style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <p><strong>Student Signature:</strong> ________________</p>
-                        <p style="margin-top: 30px;"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <p><strong>Student Signature:</strong></p>
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; padding-top: 5px;">
+                            ${studentName}
+                        </div>
+                        <p style="margin-top: 30px;"><strong>Date:</strong> ${currentDate}</p>
                     </div>
-                    <div style="text-align: right;">
-                        <p><strong>Class Teacher Signature:</strong> ________________</p>
-                        <p><strong>Status:</strong> <span style="color: #ff9800; font-weight: bold;">Pending</span></p>
+                    <div style="flex: 1; text-align: right;">
+                        <p><strong>Class Teacher Signature:</strong></p>
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; margin-left: auto; padding-top: 5px;">
+                            ${classTeacherName}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -485,6 +505,7 @@ function printPreview() {
                     strong { color: #333; }
                     p { margin: 5px 0; }
                     .preview-header { text-align: center; margin-bottom: 30px; }
+                    .preview-footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0; }
                 </style>
             </head>
             <body>
@@ -497,7 +518,58 @@ function printPreview() {
 }
 
 function downloadAsPDF() {
-    showMessage('PDF download feature requires additional setup. For now, please use Print Preview and save as PDF.', 'info');
+    const element = document.getElementById('previewContent');
+    
+    if (!element) {
+        showMessage('Preview content not found', 'error');
+        return;
+    }
+    
+    // Show loading message
+    showMessage('Generating PDF...', 'info');
+    
+    // Use html2canvas to capture the content
+    html2canvas(element, {
+        scale: 2, // Higher quality
+        useCORS: true,
+        logging: false
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        // Add first page
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        // Add extra pages if content is too long
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+        
+        // Save the PDF
+        const fileName = `Leave_Application_${document.getElementById('fullName').value || 'Student'}.pdf`;
+        pdf.save(fileName);
+        
+        showMessage('PDF downloaded successfully!', 'success');
+        
+        // Auto-hide message after 3 seconds
+        setTimeout(() => {
+            if (statusMessage) statusMessage.style.display = 'none';
+        }, 3000);
+        
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
+        showMessage('Error generating PDF. Please try Print Preview instead.', 'error');
+    });
 }
 
 function resetForm() {

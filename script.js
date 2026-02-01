@@ -4,7 +4,6 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7
 // DOM Elements
 let leaveForm, fromDateInput, toDateInput, totalDaysDisplay, workingDaysSpan, totalDaysSpan;
 let submitBtn, previewBtn, previewModal, closeModal, previewContent, statusMessage;
-let fileUploadArea, fileInput, fileList;
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -28,21 +27,12 @@ function initializeElements() {
     closeModal = document.querySelector('.close-modal');
     previewContent = document.getElementById('previewContent');
     statusMessage = document.getElementById('status-message');
-    fileUploadArea = document.getElementById('fileUploadArea');
-    fileInput = document.getElementById('supportingDocs');
-    fileList = document.getElementById('fileList');
 }
 
 function setupEventListeners() {
     // Calculate days when dates change
     if (fromDateInput) fromDateInput.addEventListener('change', updateDateMin);
     if (toDateInput) toDateInput.addEventListener('change', calculateTotalDays);
-    
-    // File upload handling
-    if (fileUploadArea) {
-        fileUploadArea.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFileUpload);
-    }
     
     // Preview functionality
     if (previewBtn) previewBtn.addEventListener('click', showPreview);
@@ -160,62 +150,6 @@ function calculateTotalDays() {
     }
 }
 
-function handleFileUpload() {
-    if (!fileList) return;
-    
-    fileList.innerHTML = '';
-    const files = Array.from(fileInput.files);
-    
-    if (files.length > 5) {
-        showMessage('Maximum 5 files allowed', 'error');
-        fileInput.value = '';
-        return;
-    }
-    
-    files.forEach((file, index) => {
-        if (file.size > 5 * 1024 * 1024) {
-            showMessage(`File "${file.name}" exceeds 5MB limit`, 'error');
-            return;
-        }
-        
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        fileItem.innerHTML = `
-            <i class="fas fa-file"></i>
-            <span>${file.name} (${formatFileSize(file.size)})</span>
-            <button class="remove-file" data-index="${index}">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        fileList.appendChild(fileItem);
-    });
-    
-    // Add remove functionality
-    document.querySelectorAll('.remove-file').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));
-            const files = Array.from(fileInput.files);
-            files.splice(index, 1);
-            
-            // Create new FileList
-            const dataTransfer = new DataTransfer();
-            files.forEach(file => dataTransfer.items.add(file));
-            fileInput.files = dataTransfer.files;
-            
-            // Re-render file list
-            fileInput.dispatchEvent(new Event('change'));
-        });
-    });
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
 function showPreview() {
     if (!leaveForm || !leaveForm.checkValidity()) {
         showMessage('Please fill all required fields correctly', 'error');
@@ -287,10 +221,6 @@ function generatePreviewHTML(formData) {
                         ${formData.get('reason')}
                     </p>
                 </div>
-                <div style="margin-top: 15px;">
-                    <strong>Supporting Documents:</strong>
-                    <p>${fileInput ? fileInput.files.length : 0} file(s) attached</p>
-                </div>
             </div>
             
             <div class="preview-footer" style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
@@ -347,7 +277,6 @@ async function handleFormSubmit(e) {
             totalDays: days.totalDays,
             workingDays: days.workingDays,
             reason: formData.get('reason'),
-            supportingDocs: fileInput ? fileInput.files.length : 0,
             status: 'Pending'
         };
         
@@ -356,14 +285,13 @@ async function handleFormSubmit(e) {
         // Send to Google Sheets via Apps Script
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Important for Google Apps Script
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(rowData)
         });
         
-        // Since we're using no-cors, we won't get a response back
         showMessage('Leave application submitted successfully! You will receive an email confirmation shortly.', 'success');
         
         // Reset form
@@ -415,7 +343,6 @@ function downloadAsPDF() {
 
 function resetForm() {
     if (leaveForm) leaveForm.reset();
-    if (fileList) fileList.innerHTML = '';
     setupDateLimits();
     calculateTotalDays();
     showMessage('Form has been reset', 'info');

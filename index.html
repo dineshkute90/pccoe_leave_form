@@ -224,8 +224,8 @@
                             <select id="academicYear" name="academicYear" required>
                                 <option value="">Select Academic Year</option>
                                 <option value="2025-2026" selected>2025-2026</option>
-                                <option value="2024-2025">2024-2025</option>
-                                <option value="2023-2024">2023-2024</option>
+                                <option value="2026-2026">2026-2027</option>
+                                <option value="2027-2028">2027-2028</option>
                             </select>
                         </div>
                         
@@ -246,9 +246,10 @@
                         
                         <div class="form-group">
                             <label for="prn">PRN Number *</label>
-                            <input type="text" id="prn" name="prn" pattern="[0-9]{11}" 
-                                   placeholder="Enter 11-digit PRN" required>
-                            <small>Format: 11-digit number</small>
+                            <input type="text" id="prn" name="prn" pattern="[0-9]{3}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{3}" 
+                                   placeholder="e.g 124B1F048" required>
+                                    oninput="this.value = this.value.toUpperCase()">
+                            <small>Format: 9 characters (e.g., 124B1F048)</small>
                         </div>
                         
                         <div class="form-group">
@@ -265,6 +266,18 @@
                                 <option value="B">B</option>
                                 <option value="C">C</option>
                                 <option value="D">D</option>
+                                <option value="E">D</option>
+                                <option value="F">D</option>
+                                <option value="G">D</option>
+                                <option value="H">D</option>
+                                <option value="I">D</option>
+                                <option value="J">D</option>
+                                <option value="K">D</option>
+                                <option value="L">D</option>
+                                <option value="M">D</option>
+                                <option value="N">D</option>
+                                <option value="O">D</option>
+                                <option value="P">D</option>
                             </select>
                         </div>
                         
@@ -272,19 +285,24 @@
                             <label for="branch">Branch *</label>
                             <select id="branch" name="branch" required>
                                 <option value="">Select Branch</option>
-                                <option value="Computer Engineering">Computer Engineering</option>
-                                <option value="IT Engineering">IT Engineering</option>
-                                <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                <option value="Civil Engineering">Civil Engineering</option>
-                                <option value="ENTC Engineering">ENTC Engineering</option>
-                                <option value="Applied Sciences">Applied Sciences</option>
+                                <option value="Computer">Computer</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Electronics and Telecommunication">Electronics and Telecommunication</option>
+                                <option value="Computer Regional">Computer Regional</option>
+                                <option value="AI ML">AI ML</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email ID *</label>
                             <input type="email" id="email" name="email" 
-                                   placeholder="studentname@pccoepune.org" required>
+                                   placeholder="studentname@pccoepune.org" 
+                                   pattern="^[a-zA-Z0-9._%+-]+@pccoepune\.org$"
+                                   title="Please use your PCCOE email address (@pccoepune.org)"
+                                   required>
+                            <small class="email-hint">Only @pccoepune.org email addresses are allowed</small>
                         </div>
                         
                         <div class="form-group">
@@ -303,11 +321,11 @@
                             <label for="classTeacher">Class Teacher *</label>
                             <select id="classTeacher" name="classTeacher" required>
                                 <option value="">Select Class Teacher</option>
-                                <option value="Prof. Dinesh Kute">Prof. Dinesh Kute</option>
-                                <option value="Prof. Sunita Sharma">Prof. Sunita Sharma</option>
-                                <option value="Prof. Rajesh Patil">Prof. Rajesh Patil</option>
-                                <option value="Prof. Priya Deshmukh">Prof. Priya Deshmukh</option>
-                                <option value="Prof. Amit Joshi">Prof. Amit Joshi</option>
+                                <option value="Prof. Sanjay Mapari (Div A)">Prof. Sanjay Mapari (Div A)</option>
+                                <option value="Prof. Arun Khalkar (Div B)">Prof. Arun Khalkar (Div B)</option>
+                                <option value="Prof. Minakshi Panchal (Div C)">Prof. Minakshi Panchal (Div C)</option>
+                                <option value="Prof. Dinesh Kute (Div O)">Prof. Dinesh Kute (Div O)</option>
+                                <option value="Prof. Geetanjali Zambre (Div P)">Prof. Geetanjali Zambre (Div P)</option>
                             </select>
                         </div>
                         
@@ -315,10 +333,11 @@
                             <label for="associateTeacher">Associate Class Teacher</label>
                             <select id="associateTeacher" name="associateTeacher">
                                 <option value="">Select Associate Teacher</option>
-                                <option value="Prof. Meena Iyer">Prof. Meena Iyer</option>
-                                <option value="Prof. Vikram Singh">Prof. Vikram Singh</option>
-                                <option value="Prof. Anjali Rao">Prof. Anjali Rao</option>
-                                <option value="Not Applicable">Not Applicable</option>
+                                <option value="Prof. Brijesh Deshmukh (Div A)">Prof. Brijesh Deshmukh (Div A)</option>
+                                <option value="Prof. Bhausaheb Sanap (Div B)">Prof. Bhausaheb Sanap (Div B)</option>
+                                <option value="Prof. Dattatraya Anarse (Div C)">Prof. Dattatraya Anarse (Div C)</option>
+                                <option value="Prof. Pooja Potdar (Div O)">Prof. Pooja Potdar (Div O)</option>
+                                <option value="Prof. Ganesh Mundhe (Div P)">Prof. Ganesh Mundhe (Div P)</option>
                             </select>
                         </div>
                     </div>

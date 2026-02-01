@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setupDateLimits();
     setupCurrentYear();
     debugLogo();
+    
+    // Clear leave details on page load
+    clearLeaveDetails();
 });
 
 function initializeElements() {
@@ -63,22 +66,39 @@ function setupEventListeners() {
     // Reset button
     const resetBtn = document.getElementById('resetBtn');
     if (resetBtn) resetBtn.addEventListener('click', resetForm);
+    
+    // Real-time validation for email and PRN
+    const emailField = document.getElementById('email');
+    const prnField = document.getElementById('prn');
+    const contactField = document.getElementById('contact');
+    
+    if (emailField) {
+        emailField.addEventListener('input', validateEmail);
+        emailField.addEventListener('blur', validateEmail);
+    }
+    
+    if (prnField) {
+        prnField.addEventListener('input', validatePRN);
+        prnField.addEventListener('blur', validatePRN);
+    }
+    
+    if (contactField) {
+        contactField.addEventListener('input', validateContact);
+        contactField.addEventListener('blur', validateContact);
+    }
 }
 
 function setupDateLimits() {
-    // Set today's date as minimum
+    // Only set minimum date (today), don't set default values
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
     
     if (fromDateInput) {
         fromDateInput.min = todayStr;
-        fromDateInput.value = todayStr;
     }
+    
     if (toDateInput) {
         toDateInput.min = todayStr;
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        toDateInput.value = tomorrow.toISOString().split('T')[0];
     }
     
     // Calculate initial total days
@@ -90,6 +110,35 @@ function setupCurrentYear() {
     const academicYearSelect = document.getElementById('academicYear');
     if (academicYearSelect) {
         academicYearSelect.value = '2025-2026';
+    }
+}
+
+function clearLeaveDetails() {
+    // Clear leave details section
+    const leaveTypeSelect = document.getElementById('leaveType');
+    if (leaveTypeSelect) {
+        leaveTypeSelect.value = '';
+    }
+    
+    if (fromDateInput) {
+        fromDateInput.value = '';
+    }
+    
+    if (toDateInput) {
+        toDateInput.value = '';
+    }
+    
+    // Reset days display
+    if (totalDaysDisplay) {
+        totalDaysDisplay.value = '0 days';
+    }
+    
+    if (workingDaysSpan) {
+        workingDaysSpan.textContent = 'Working days: 0';
+    }
+    
+    if (totalDaysSpan) {
+        totalDaysSpan.textContent = 'Total days: 0';
     }
 }
 
@@ -109,7 +158,7 @@ function calculateTotalDays() {
     const fromDate = new Date(fromDateInput.value);
     const toDate = new Date(toDateInput.value);
     
-    if (fromDate && toDate && fromDate <= toDate) {
+    if (fromDateInput.value && toDateInput.value && fromDate <= toDate) {
         const timeDiff = toDate.getTime() - fromDate.getTime();
         const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
         
@@ -141,10 +190,123 @@ function calculateTotalDays() {
     }
 }
 
+function validateEmail() {
+    const emailField = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    
+    if (!emailField || !emailError) return;
+    
+    const email = emailField.value.trim();
+    const pccoeDomainRegex = /^[a-zA-Z0-9._%+-]+@pccoepune\.org$/i;
+    
+    // Clear previous error
+    emailField.classList.remove('input-error', 'input-success');
+    emailError.textContent = '';
+    emailError.style.display = 'none';
+    
+    if (!email) {
+        emailField.classList.add('input-error');
+        emailError.textContent = 'Email is required';
+        emailError.style.display = 'block';
+        return false;
+    }
+    
+    if (!pccoeDomainRegex.test(email)) {
+        emailField.classList.add('input-error');
+        emailError.textContent = 'Only @pccoepune.org email addresses are allowed';
+        emailError.style.display = 'block';
+        return false;
+    }
+    
+    // Email is valid
+    emailField.classList.add('input-success');
+    return true;
+}
+
+function validatePRN() {
+    const prnField = document.getElementById('prn');
+    const prnError = document.getElementById('prnError');
+    
+    if (!prnField || !prnError) return;
+    
+    const prn = prnField.value.trim().toUpperCase();
+    const prnRegex = /^[0-9]{3}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{3}$/;
+    
+    // Clear previous error
+    prnField.classList.remove('input-error', 'input-success');
+    prnError.textContent = '';
+    prnError.style.display = 'none';
+    
+    if (!prn) {
+        prnField.classList.add('input-error');
+        prnError.textContent = 'PRN is required';
+        prnError.style.display = 'block';
+        return false;
+    }
+    
+    if (!prnRegex.test(prn)) {
+        prnField.classList.add('input-error');
+        prnError.textContent = 'PRN must be 9 characters in format: 124B1F048';
+        prnError.style.display = 'block';
+        return false;
+    }
+    
+    // PRN is valid
+    prnField.classList.add('input-success');
+    return true;
+}
+
+function validateContact() {
+    const contactField = document.getElementById('contact');
+    const contactError = document.getElementById('contactError');
+    
+    if (!contactField || !contactError) return;
+    
+    const contact = contactField.value.trim();
+    const contactRegex = /^[0-9]{10}$/;
+    
+    // Clear previous error
+    contactField.classList.remove('input-error', 'input-success');
+    contactError.textContent = '';
+    contactError.style.display = 'none';
+    
+    if (!contact) {
+        contactField.classList.add('input-error');
+        contactError.textContent = 'Contact number is required';
+        contactError.style.display = 'block';
+        return false;
+    }
+    
+    if (!contactRegex.test(contact)) {
+        contactField.classList.add('input-error');
+        contactError.textContent = 'Contact must be exactly 10 digits';
+        contactError.style.display = 'block';
+        return false;
+    }
+    
+    // Contact is valid
+    contactField.classList.add('input-success');
+    return true;
+}
+
+function validateAllFields() {
+    const isEmailValid = validateEmail();
+    const isPRNValid = validatePRN();
+    const isContactValid = validateContact();
+    
+    return isEmailValid && isPRNValid && isContactValid;
+}
+
 function showPreview() {
     if (!leaveForm || !leaveForm.checkValidity()) {
         showMessage('Please fill all required fields correctly', 'error');
         leaveForm.reportValidity();
+        return;
+    }
+    
+    // Validate specific fields
+    if (!validateAllFields()) {
+        showMessage('Please correct the highlighted fields', 'error');
         return;
     }
     
@@ -236,6 +398,12 @@ async function handleFormSubmit(e) {
     if (!leaveForm || !leaveForm.checkValidity()) {
         showMessage('Please fill all required fields correctly', 'error');
         leaveForm.reportValidity();
+        return;
+    }
+    
+    // Validate specific fields
+    if (!validateAllFields()) {
+        showMessage('Please correct the highlighted fields before submitting', 'error');
         return;
     }
     
@@ -333,9 +501,29 @@ function downloadAsPDF() {
 }
 
 function resetForm() {
-    if (leaveForm) leaveForm.reset();
-    setupDateLimits();
-    calculateTotalDays();
+    if (leaveForm) {
+        leaveForm.reset();
+        
+        // Clear all error states
+        const errorFields = document.querySelectorAll('.input-error, .input-success');
+        errorFields.forEach(field => {
+            field.classList.remove('input-error', 'input-success');
+        });
+        
+        // Clear error messages
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(error => {
+            error.textContent = '';
+            error.style.display = 'none';
+        });
+    }
+    
+    // Clear leave details
+    clearLeaveDetails();
+    
+    // Set current year
+    setupCurrentYear();
+    
     showMessage('Form has been reset', 'info');
     
     setTimeout(() => {

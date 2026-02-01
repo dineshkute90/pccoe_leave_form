@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Application - PCCOE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/leave.png">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with College Logo and Name -->
+        <header class="header">
+            <div class="college-brand">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7f/Pimpri_Chinchwad_College_of_Engineering_%26_Research.svg/1200px-Pimpri_Chinchwad_College_of_Engineering_%26_Research.svg.png" 
+                     alt="PCCOE Logo" class="college-logo">
+                <div class="college-info">
+                    <h1>Pimpri Chinchwad Education Trust's</h1>
+                    <h2>Pimpri Chinchwad College of Engineering</h2>
+                    <p>Department of Applied Sciences & Humanities</p>
+                </div>
+            </div>
+            <div class="academic-year">
+                <span id="current-year"></span>
+            </div>
+        </header>
+
+        <!-- Leave Form Container -->
+        <div class="form-container">
+            <div class="form-header">
+                <h1><i class="fas fa-file-alt"></i> Leave Application Form</h1>
+                <p class="subtitle">Fill all details accurately. Leave will be processed by your Class Teacher.</p>
+            </div>
+
+            <!-- Status Messages -->
+            <div id="status-message" class="status-message"></div>
+
+            <!-- Leave Form -->
+            <form id="leaveForm" class="leave-form">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="academicYear">Academic Year *</label>
+                            <select id="academicYear" name="academicYear" required>
+                                <option value="">Select Academic Year</option>
+                                <option value="2024-2025">2024-2025</option>
+                                <option value="2023-2024">2023-2024</option>
+                                <option value="2022-2023">2022-2023</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="semester">Semester *</label>
+                            <select id="semester" name="semester" required>
+                                <option value="">Select Semester</option>
+                                <option value="I">I</option>
+                                <option value="II">II</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                                <option value="V">V</option>
+                                <option value="VI">VI</option>
+                                <option value="VII">VII</option>
+                                <option value="VIII">VIII</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prn">PRN Number *</label>
+                            <input type="text" id="prn" name="prn" pattern="[0-9]{11}" 
+                                   placeholder="Enter 11-digit PRN" required>
+                            <small>Format: 11-digit number</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" 
+                                   placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="division">Division *</label>
+                            <select id="division" name="division" required>
+                                <option value="">Select Division</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="branch">Branch *</label>
+                            <select id="branch" name="branch" required>
+                                <option value="">Select Branch</option>
+                                <option value="Computer Engineering">Computer Engineering</option>
+                                <option value="IT Engineering">IT Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="ENTC Engineering">ENTC Engineering</option>
+                                <option value="Applied Sciences">Applied Sciences</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email ID *</label>
+                            <input type="email" id="email" name="email" 
+                                   placeholder="studentname@pccoepune.org" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact">Contact Number *</label>
+                            <input type="tel" id="contact" name="contact" 
+                                   pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Teacher Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-chalkboard-teacher"></i> Teacher Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="classTeacher">Class Teacher *</label>
+                            <select id="classTeacher" name="classTeacher" required>
+                                <option value="">Select Class Teacher</option>
+                                <option value="Prof. Dinesh Kute">Prof. Dinesh Kute</option>
+                                <option value="Prof. Sunita Sharma">Prof. Sunita Sharma</option>
+                                <option value="Prof. Rajesh Patil">Prof. Rajesh Patil</option>
+                                <option value="Prof. Priya Deshmukh">Prof. Priya Deshmukh</option>
+                                <option value="Prof. Amit Joshi">Prof. Amit Joshi</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="associateTeacher">Associate Class Teacher</label>
+                            <select id="associateTeacher" name="associateTeacher">
+                                <option value="">Select Associate Teacher</option>
+                                <option value="Prof. Meena Iyer">Prof. Meena Iyer</option>
+                                <option value="Prof. Vikram Singh">Prof. Vikram Singh</option>
+                                <option value="Prof. Anjali Rao">Prof. Anjali Rao</option>
+                                <option value="Not Applicable">Not Applicable</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Details Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Leave Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="leaveType">Type of Leave *</label>
+                            <select id="leaveType" name="leaveType" required>
+                                <option value="">Select Leave Type</option>
+                                <option value="Medical Leave">Medical Leave</option>
+                                <option value="Personal Leave">Personal Leave</option>
+                                <option value="Family Emergency">Family Emergency</option>
+                                <option value="Academic Leave">Academic Leave</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fromDate">From Date *</label>
+                            <input type="date" id="fromDate" name="fromDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="toDate">To Date *</label>
+                            <input type="date" id="toDate" name="toDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="totalDays">Total Number of Days</label>
+                            <input type="text" id="totalDays" name="totalDays" readonly 
+                                   value="0 days" class="total-days-display">
+                            <div class="days-counter">
+                                <span id="workingDays">Working days: 0</span>
+                                <span id="totalDaysCount">Total days: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="reason">Reason for Leave *</label>
+                        <textarea id="reason" name="reason" rows="4" 
+                                  placeholder="Please provide detailed reason for leave..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="supportingDocs">Supporting Documents</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop files here or click to upload</p>
+                            <input type="file" id="supportingDocs" name="supportingDocs" 
+                                   multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <div class="file-list" id="fileList"></div>
+                        </div>
+                        <small>Accepted files: PDF, JPG, PNG, DOC (Max 5 files, 5MB each)</small>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" id="previewBtn" class="btn-secondary">
+                        <i class="fas fa-eye"></i> Preview Application
+                    </button>
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Leave Application
+                    </button>
+                    <button type="reset" id="resetBtn" class="btn-outline">
+                        <i class="fas fa-redo"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+
+            <!-- Preview Modal -->
+            <div id="previewModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-file-pdf"></i> Leave Application Preview</h2>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body" id="previewContent"></div>
+                    <div class="modal-footer">
+                        <button id="printPreview" class="btn-secondary">
+                            <i class="fas fa-print"></i> Print Preview
+                        </button>
+                        <button id="downloadPDF" class="btn-primary">
+                            <i class="fas fa-download"></i> Download as PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© <span id="current-year-footer"></span> PCCOE Leave Management System | 
+               Developed for Department of Applied Sciences & Humanities</p>
+            <p class="contact-info">
+                <i class="fas fa-envelope"></i> dinesh.kute@pccoepune.org | 
+                <i class="fas fa-phone"></i> +91-20-12345678
+            </p>
+        </footer>
+    </div>
+
+    <!-- Google Sheets API Script -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 // Google Sheets Configuration
-const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
+const SHEET_ID = '1AbCdEfGhIjKlMnOpQrStUvWxYz123456789';
 const API_KEY = 'YOUR_GOOGLE_API_KEY_HERE';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7U_gcPFi-gHhBTHipKhW2LWLoX-a8-ogz5eL0Yu_1WKjrJkL/exec';
 

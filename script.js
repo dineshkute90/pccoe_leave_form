@@ -1,4 +1,4 @@
-// Google Apps Script URL - Replace with your actual URL
+// Google Apps Script URL
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7U_gcPFi-gHhBTHipKhW2LWLoX-a8-ogz5eL0Yu_1WKjrJkL/exec';
 
 // DOM Elements
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     setupDateLimits();
     setupCurrentYear();
+    debugLogo();
 });
 
 function initializeElements() {
@@ -85,21 +86,11 @@ function setupDateLimits() {
 }
 
 function setupCurrentYear() {
-    const currentYear = new Date().getFullYear();
-    const nextYear = currentYear + 1;
-    const academicYear = `${currentYear}-${nextYear}`;
-    
     // Set academic year in form
     const academicYearSelect = document.getElementById('academicYear');
     if (academicYearSelect) {
-        academicYearSelect.value = academicYear;
+        academicYearSelect.value = '2025-2026';
     }
-    
-    // Set in header and footer
-    const yearElements = document.querySelectorAll('#current-year, #current-year-footer');
-    yearElements.forEach(el => {
-        if (el) el.textContent = academicYear;
-    });
 }
 
 function updateDateMin() {
@@ -364,6 +355,57 @@ function showMessage(message, type = 'info') {
         setTimeout(() => {
             statusMessage.style.display = 'none';
         }, 5000);
+    }
+}
+
+// Logo debug function
+function debugLogo() {
+    const logo = document.querySelector('.college-logo');
+    if (logo) {
+        console.log('Logo element found:', logo);
+        console.log('Logo src:', logo.src);
+        console.log('Logo complete:', logo.complete);
+        console.log('Logo natural dimensions:', logo.naturalWidth, 'x', logo.naturalHeight);
+        
+        logo.onload = function() {
+            console.log('Logo loaded successfully!');
+            console.log('Actual dimensions:', this.width, 'x', this.height);
+        };
+        
+        logo.onerror = function() {
+            console.error('Logo failed to load from:', this.src);
+            
+            // Try alternative paths
+            const fallbackPaths = [
+                'https://raw.githubusercontent.com/dineshkute90/pccoe_fy_contact_details/main/pccoe_logo.png',
+                './pccoe_logo.png',
+                'pccoe_logo.png',
+                'https://via.placeholder.com/95x95/1a237e/ffffff?text=PCCOE'
+            ];
+            
+            let currentSrc = this.src;
+            let triedPaths = [currentSrc];
+            
+            for (let path of fallbackPaths) {
+                if (!triedPaths.includes(path)) {
+                    console.log('Trying alternative path:', path);
+                    this.src = path;
+                    break;
+                }
+            }
+        };
+        
+        // Check if already loaded
+        if (logo.complete) {
+            if (logo.naturalHeight === 0) {
+                console.error('Logo appears to be broken');
+                logo.onerror();
+            } else {
+                console.log('Logo already loaded');
+            }
+        }
+    } else {
+        console.error('Logo element not found in DOM');
     }
 }
 

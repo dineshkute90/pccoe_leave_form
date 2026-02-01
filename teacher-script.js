@@ -1,3 +1,37 @@
+// Check if teacher is logged in
+if (!localStorage.getItem('teacherLoggedIn')) {
+    // Redirect to login page
+    window.location.href = 'teacher-login.html';
+}
+
+// Get teacher info from localStorage
+const teacherEmail = localStorage.getItem('teacherEmail') || 'dinesh.kute@pccoepune.org';
+const teacherName = localStorage.getItem('teacherName') || 'Prof. Dinesh Kute';
+
+// Update the teacher name in the dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    const teacherNameElement = document.getElementById('teacherName');
+    if (teacherNameElement) {
+        teacherNameElement.textContent = teacherName;
+    }
+    
+    // Update logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            // Clear localStorage and redirect
+            localStorage.removeItem('teacherLoggedIn');
+            localStorage.removeItem('teacherEmail');
+            localStorage.removeItem('teacherName');
+            window.location.href = 'teacher-login.html';
+        });
+    }
+    
+    // Rest of your existing code...
+    // Update currentTeacher variable
+    window.currentTeacher = teacherName;
+});
+
 // Teacher Dashboard JavaScript
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7U_gcPFi-gHhBTHipKhW2LWLoX-a8-ogz5eL0Yu_1WKjrJkL/exec';
 let currentTeacher = 'Prof. Dinesh Kute';

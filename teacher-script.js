@@ -1,5 +1,5 @@
 // Teacher Dashboard JavaScript
-const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdD0m9B1oIm6psHQEf7U_gcPFi-gHhBTHipKhW2LWLoX-a8-ogz5eL0Yu_1WKjrJkL/exec';
 let currentTeacher = 'Prof. Dinesh Kute';
 let leavesData = [];
 let currentLeaves = [];

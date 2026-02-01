@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Login - PCCOE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(0) invert(1);
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .login-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3949ab;
+            box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3949ab 0%, #283593 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(57, 73, 171, 0.3);
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-footer a {
+            color: #3949ab;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .back-link a:hover {
+            color: #3949ab;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7f/Pimpri_Chinchwad_College_of_Engineering_%26_Research.svg/1200px-Pimpri_Chinchwad_College_of_Engineering_%26_Research.svg.png" 
+                 alt="PCCOE Logo">
+            <h1>Teacher Login</h1>
+            <p>Leave Management System</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <div class="login-form">
+            <div class="form-group">
+                <label for="teacherEmail">Email Address</label>
+                <input type="email" id="teacherEmail" placeholder="teachername@pccoepune.org" autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="teacherPassword">Password</label>
+                <input type="password" id="teacherPassword" placeholder="Enter your password" autocomplete="current-password">
+            </div>
+
+            <button id="loginBtn" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+            </button>
+
+            <div class="back-link">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i> Back to Student Portal
+                </a>
+            </div>
+        </div>
+
+        <div class="login-footer">
+            <p>For access issues, contact: <a href="mailto:dinesh.kute@pccoepune.org">dinesh.kute@pccoepune.org</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Simple login system for demo
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const email = document.getElementById('teacherEmail').value;
+            const password = document.getElementById('teacherPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Reset error
+            errorMessage.textContent = '';
+            errorMessage.classList.remove('show');
+            
+            // Simple validation
+            if (!email || !password) {
+                errorMessage.textContent = 'Please enter both email and password';
+                errorMessage.classList.add('show');
+                return;
+            }
+            
+            // For demo purposes - simple hardcoded credentials
+            // In production, use proper authentication
+            
+            // List of teacher emails (add more as needed)
+            const teacherEmails = [
+                'dinesh.kute@pccoepune.org',
+                'teacher@pccoepune.org',
+                'admin@pccoepune.org'
+            ];
+            
+            // Demo password for testing
+            const demoPassword = 'pccoe@123';
+            
+            if (teacherEmails.includes(email.toLowerCase()) && password === demoPassword) {
+                // Store teacher info in localStorage for dashboard
+                localStorage.setItem('teacherLoggedIn', 'true');
+                localStorage.setItem('teacherEmail', email);
+                
+                // Get teacher name from email
+                const teacherName = getTeacherName(email);
+                localStorage.setItem('teacherName', teacherName);
+                
+                // Redirect to dashboard
+                window.location.href = 'teacher-dashboard.html';
+            } else {
+                errorMessage.textContent = 'Invalid email or password. For demo, use: dinesh.kute@pccoepune.org / pccoe@123';
+                errorMessage.classList.add('show');
+            }
+        });
+        
+        // Helper function to get teacher name from email
+        function getTeacherName(email) {
+            const nameMap = {
+                'dinesh.kute@pccoepune.org': 'Prof. Dinesh Kute',
+                'teacher@pccoepune.org': 'Prof. Sunita Sharma',
+                'admin@pccoepune.org': 'Admin'
+            };
+            return nameMap[email.toLowerCase()] || email.split('@')[0];
+        }
+        
+        // Allow pressing Enter to login
+        document.getElementById('teacherPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>

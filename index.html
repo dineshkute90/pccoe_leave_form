@@ -243,15 +243,16 @@
                                 <option value="VIII">VIII</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="prn">PRN Number *</label>
-                            <input type="text" id="prn" name="prn" pattern="[0-9]{3}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{3}" 
-                                   placeholder="e.g 124B1F048" required>
-                                    oninput="this.value = this.value.toUpperCase()">
-                            <small>Format: 9 characters (e.g., 124B1F048)</small>
-                        </div>
+    <label for="prn">PRN Number *</label>
+    <input type="text" id="prn" name="prn" pattern="[0-9]{3}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{3}" 
+           placeholder="e.g 124B1F048" required 
+           oninput="this.value = this.value.toUpperCase()">
+    <small>Format: 9 characters (e.g., 124B1F048)</small>
+</div>
                         
+                                         
                         <div class="form-group">
                             <label for="fullName">Full Name *</label>
                             <input type="text" id="fullName" name="fullName" 

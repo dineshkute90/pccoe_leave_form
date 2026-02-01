@@ -342,14 +342,34 @@ function generatePreviewHTML(formData) {
     
     return `
         <div class="preview-document">
-            <div class="preview-header" style="text-align: center; margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
-                <h2 style="color: #1a237e; margin-bottom: 10px;">Leave Application Preview</h2>
-                <p style="color: #666;">Generated on ${currentDate}</p>
+            <!-- College Header -->
+            <div class="preview-college-header" style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #1a237e 0%, #283593 100%); color: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); border-left: 6px solid #ff9800; border-right: 6px solid #ff9800;">
+                <h1 style="font-size: 18px; margin-bottom: 3px; font-weight: 500; color: #ffffff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Pimpri Chinchwad Education Trust's</h1>
+                <h2 style="font-size: 24px; margin-top: 3px; margin-bottom: 3px; font-weight: 700; color: white !important; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); letter-spacing: 0.5px;">Pimpri Chinchwad College of Engineering</h2>
+                <p style="font-size: 16px; margin-top: 3px; font-weight: 500; color: #f0f0f0; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Department of Applied Sciences & Humanities</p>
+                <div style="margin-top: 15px; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, rgba(255, 152, 0, 0.95) 0%, rgba(255, 167, 38, 0.95) 100%); color: #1a237e; padding: 10px 20px; border-radius: 25px; border: 2px solid rgba(255, 255, 255, 0.4); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3); display: inline-block;">
+                    2025–26
+                </div>
             </div>
             
-            <div class="preview-section" style="margin-bottom: 20px;">
-                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
-                    Student Information
+            <!-- Form Title -->
+            <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e8eaf6;">
+                <h1 style="color: #1a237e; font-size: 2.2rem; margin-bottom: 10px;">
+                    <i class="fas fa-file-alt"></i> Leave Application Form
+                </h1>
+                <p style="color: #666; font-size: 1.1rem;">
+                    Fill all details accurately. Leave will be processed by your Class Teacher.
+                </p>
+            </div>
+            
+            <!-- Generated Date -->
+            <div style="text-align: right; margin-bottom: 20px; color: #666; font-size: 0.9rem;">
+                Generated on: ${currentDate}
+            </div>
+            
+            <div class="preview-section" style="margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e0e0e0;">
+                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-user-graduate"></i> Student Information
                 </h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
                     <div><strong>Academic Year:</strong> ${formData.get('academicYear')}</div>
@@ -363,9 +383,9 @@ function generatePreviewHTML(formData) {
                 </div>
             </div>
             
-            <div class="preview-section" style="margin-bottom: 20px;">
-                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
-                    Teacher Information
+            <div class="preview-section" style="margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e0e0e0;">
+                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-chalkboard-teacher"></i> Teacher Information
                 </h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
                     <div><strong>Class Teacher:</strong> ${formData.get('classTeacher')}</div>
@@ -373,9 +393,9 @@ function generatePreviewHTML(formData) {
                 </div>
             </div>
             
-            <div class="preview-section" style="margin-bottom: 20px;">
-                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">
-                    Leave Details
+            <div class="preview-section" style="margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e0e0e0;">
+                <h3 style="color: #3949ab; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 15px;">
+                    <i class="fas fa-calendar-alt"></i> Leave Details
                 </h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
                     <div><strong>Leave Type:</strong> ${formData.get('leaveType')}</div>
@@ -385,7 +405,7 @@ function generatePreviewHTML(formData) {
                 </div>
                 <div style="margin-top: 15px;">
                     <strong>Reason:</strong>
-                    <p style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 5px;">
+                    <p style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 5px; white-space: pre-wrap;">
                         ${formData.get('reason')}
                     </p>
                 </div>
@@ -395,14 +415,14 @@ function generatePreviewHTML(formData) {
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div style="flex: 1;">
                         <p><strong>Student Signature:</strong></p>
-                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; padding-top: 5px;">
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; padding-top: 5px; text-align: center;">
                             ${studentName}
                         </div>
                         <p style="margin-top: 30px;"><strong>Date:</strong> ${currentDate}</p>
                     </div>
                     <div style="flex: 1; text-align: right;">
                         <p><strong>Class Teacher Signature:</strong></p>
-                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; margin-left: auto; padding-top: 5px;">
+                        <div style="margin-top: 60px; border-top: 1px solid #000; width: 200px; margin-left: auto; padding-top: 5px; text-align: center;">
                             ${classTeacherName}
                         </div>
                     </div>
@@ -499,12 +519,14 @@ function printPreview() {
             <head>
                 <title>Leave Application - ${document.getElementById('fullName').value}</title>
                 <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+                    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+                    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+                    body { font-family: 'Poppins', sans-serif; padding: 20px; line-height: 1.6; }
                     .preview-section { margin-bottom: 30px; }
                     h3 { color: #1a237e; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
                     strong { color: #333; }
                     p { margin: 5px 0; }
-                    .preview-header { text-align: center; margin-bottom: 30px; }
+                    .preview-college-header { text-align: center; margin-bottom: 30px; }
                     .preview-footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0; }
                 </style>
             </head>

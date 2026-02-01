@@ -9,105 +9,199 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/leave.png">
     <style>
-    /* Remove any existing .college-brand centering styles and add these: */
-    .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .college-brand {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .college-logo {
-        height: 80px;
-        width: auto;
-        border-radius: 4px;
-        border: 2px solid white;
-        padding: 5px;
-        background: white;
-    }
-    
-    .college-info h1 {
-        font-size: 16px;
-        margin-bottom: 2px;
-        font-weight: 500;
-        color: #ffffff;
-    }
-    
-    .college-info h2 {
-        font-size: 20px;
-        margin-top: 2px;
-        margin-bottom: 2px;
-        font-weight: 700;
-        color: white !important; /* White color as requested */
-    }
-    
-    .college-info p {
-        font-size: 14px;
-        margin-top: 2px;
-        font-weight: 500;
-        color: #e0e0e0;
-    }
-    
-    .academic-year {
-        font-size: 18px;
-        font-weight: 700;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 8px 15px;
-        border-radius: 20px;
-        border: 2px solid white;
-    }
-    
-    @media (max-width: 768px) {
+        /* Header Layout */
         .header {
-            flex-direction: column;
-            text-align: center;
-            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            border-left: 6px solid #ff9800;
+            border-right: 6px solid #ff9800;
+            min-height: 110px;
         }
         
-        .college-brand {
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 10px;
+        /* Left Logo Container */
+        .logo-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
         }
         
         .college-logo {
-            height: 70px;
+            height: 95px;
+            width: auto;
+            object-fit: contain;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
         
-        .academic-year {
-            margin-top: 10px;
+        /* Center College Info */
+        .college-info {
+            flex: 1;
+            text-align: center;
+            padding: 0 25px;
         }
-    }
-</style>
+        
+        .college-info h1 {
+            font-size: 18px; /* Increased font */
+            margin-bottom: 3px;
+            font-weight: 500;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .college-info h2 {
+            font-size: 24px; /* Increased font */
+            margin-top: 3px;
+            margin-bottom: 3px;
+            font-weight: 700;
+            color: white !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+        
+        .college-info p {
+            font-size: 16px; /* Increased font */
+            margin-top: 3px;
+            font-weight: 500;
+            color: #f0f0f0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Right Academic Year */
+        .academic-year {
+            font-size: 22px; /* Increased font */
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.95) 0%, rgba(255, 167, 38, 0.95) 100%);
+            color: #1a237e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .header {
+                padding: 15px 20px;
+                min-height: 100px;
+            }
+            
+            .college-logo {
+                height: 80px;
+            }
+            
+            .college-info h1 {
+                font-size: 16px;
+            }
+            
+            .college-info h2 {
+                font-size: 20px;
+            }
+            
+            .college-info p {
+                font-size: 14px;
+            }
+            
+            .academic-year {
+                font-size: 18px;
+                padding: 8px 16px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+                min-height: auto;
+            }
+            
+            .logo-left {
+                margin-bottom: 10px;
+            }
+            
+            .college-logo {
+                height: 75px;
+                margin-bottom: 5px;
+            }
+            
+            .college-info {
+                padding: 10px 0;
+                margin-bottom: 10px;
+            }
+            
+            .college-info h1 {
+                font-size: 15px;
+            }
+            
+            .college-info h2 {
+                font-size: 18px;
+            }
+            
+            .college-info p {
+                font-size: 13px;
+            }
+            
+            .academic-year {
+                font-size: 17px;
+                padding: 8px 15px;
+                margin-top: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .college-info h1 {
+                font-size: 14px;
+            }
+            
+            .college-info h2 {
+                font-size: 16px;
+            }
+            
+            .college-info p {
+                font-size: 12px;
+            }
+            
+            .academic-year {
+                font-size: 16px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <!-- Header with College Logo and Name -->
         <header class="header">
-    <div class="college-brand">
-        <img src="pccoe_logo.png" 
-            alt="PCCOE Logo" class="college-logo">
-        <div class="college-info">
-            <h1>Pimpri Chinchwad Education Trust's</h1>
-            <h2>Pimpri Chinchwad College of Engineering</h2>
-            <p>Department of Applied Sciences & Humanities</p>
-        </div>
-    </div>
-    <div class="academic-year">
-        <span>2025-26</span>
-    </div>
-</header>
+            <!-- Left: Logo -->
+            <div class="logo-left">
+                <img src="pccoe_logo.png" 
+                     alt="PCCOE Logo" class="college-logo">
+            </div>
+            
+            <!-- Center: College Info -->
+            <div class="college-info">
+                <h1>Pimpri Chinchwad Education Trust's</h1>
+                <h2>Pimpri Chinchwad College of Engineering</h2>
+                <p>Department of Applied Sciences & Humanities</p>
+            </div>
+            
+            <!-- Right: Academic Year -->
+            <div class="academic-year">
+                <span>2025-26</span>
+            </div>
+        </header>
 
         <!-- Leave Form Container -->
         <div class="form-container">

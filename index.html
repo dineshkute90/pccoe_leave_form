@@ -8,13 +8,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/leave.png">
+    <style>
+        /* Additional styles for centering college name */
+        .college-brand {
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .college-info h1 {
+            margin-bottom: 5px;
+        }
+        
+        .college-info h2 {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .college-info p {
+            margin-top: 5px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <!-- Header with College Logo and Name -->
         <header class="header">
             <div class="college-brand">
-                <img src="https://img.icons8.com/color/96/000000/university-campus.png" 
+                <img src="pccoe_logo.png" 
                     alt="PCCOE Logo" class="college-logo">
                 <div class="college-info">
                     <h1>Pimpri Chinchwad Education Trust's</h1>
@@ -23,7 +46,7 @@
                 </div>
             </div>
             <div class="academic-year">
-                <span id="current-year"></span>
+                <span>2025-26</span>
             </div>
         </header>
 
@@ -47,9 +70,9 @@
                             <label for="academicYear">Academic Year *</label>
                             <select id="academicYear" name="academicYear" required>
                                 <option value="">Select Academic Year</option>
+                                <option value="2025-2026" selected>2025-2026</option>
                                 <option value="2024-2025">2024-2025</option>
                                 <option value="2023-2024">2023-2024</option>
-                                <option value="2022-2023">2022-2023</option>
                             </select>
                         </div>
                         
@@ -228,7 +251,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>© <span id="current-year-footer"></span> PCCOE Leave Management System | 
+            <p>© 2025-26 PCCOE Leave Management System | 
                Developed for Department of Applied Sciences & Humanities</p>
             <p class="contact-info">
                 <i class="fas fa-envelope"></i> dinesh.kute@pccoepune.org | 
@@ -240,5 +263,11 @@
     <!-- Google Sheets API Script -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Set current year to 2025-26 in the dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('academicYear').value = '2025-2026';
+        });
+    </script>
 </body>
 </html>

@@ -818,7 +818,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeElements();
             setupEventListeners();
-            setupDateLimits();
             setupCurrentYear();
             debugLogo();
             
@@ -897,22 +896,7 @@
             }
         }
 
-        function setupDateLimits() {
-            // Only set minimum date (today), don't set default values
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-            
-            if (fromDateInput) {
-                fromDateInput.min = todayStr;
-            }
-            
-            if (toDateInput) {
-                toDateInput.min = todayStr;
-            }
-            
-            // Calculate initial total days
-            calculateTotalDays();
-        }
+        // Removed setupDateLimits – no restrictions on past dates
 
         function setupCurrentYear() {
             // Set academic year in form
@@ -954,8 +938,9 @@
         function updateDateMin() {
             if (!fromDateInput || !toDateInput) return;
             
+            // Ensure toDate is not before fromDate
             toDateInput.min = fromDateInput.value;
-            if (new Date(toDateInput.value) < new Date(fromDateInput.value)) {
+            if (toDateInput.value && new Date(toDateInput.value) < new Date(fromDateInput.value)) {
                 toDateInput.value = fromDateInput.value;
             }
             calculateTotalDays();

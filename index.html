@@ -293,6 +293,42 @@
             color: #3949ab;
         }
 
+        .history-table {
+            margin-top: 20px;
+            overflow-x: auto;
+            display: none;
+        }
+
+        .history-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .history-table th {
+            background: #3949ab;
+            color: white;
+            padding: 12px;
+            font-weight: 500;
+        }
+
+        .history-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-table tr:hover {
+            background: #f5f5f5;
+        }
+
         .form-actions {
             display: flex;
             justify-content: center;
@@ -661,9 +697,28 @@
                             <span class="error-message" id="contactError"></span>
                         </div>
                     </div>
+                    
+                    <!-- Leave history and total count display -->
                     <div class="leaves-info" id="leavesInfo" style="display: none;">
                         <i class="fas fa-history"></i>
                         <span id="leavesCount">0</span> total leave(s) taken previously
+                    </div>
+                    
+                    <div class="history-table" id="historyContainer">
+                        <h4><i class="fas fa-list-alt"></i> Previous Leave Applications</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Leave Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -800,7 +855,7 @@
         // DOM elements
         let leaveForm, fromDateInput, toDateInput, totalDaysDisplay, workingDaysSpan, totalDaysSpan;
         let submitBtn, previewBtn, previewModal, closeModal, previewContent, statusMessage;
-        let prnInput, leavesInfo, leavesCountSpan;
+        let prnInput, leavesInfo, leavesCountSpan, historyContainer, historyTableBody;
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
@@ -825,6 +880,8 @@
             prnInput = document.getElementById('prn');
             leavesInfo = document.getElementById('leavesInfo');
             leavesCountSpan = document.getElementById('leavesCount');
+            historyContainer = document.getElementById('historyContainer');
+            historyTableBody = document.getElementById('historyTableBody');
         }
 
         function setupEventListeners() {
@@ -858,7 +915,12 @@
                 prnInput.addEventListener('input', validatePRN);
                 prnInput.addEventListener('blur', function() {
                     validatePRN();
-                    fetchStudentLeaves(prnInput.value.trim().toUpperCase());
+                    const prn = prnInput.value.trim().toUpperCase();
+                    if (prn.length >= 9) {
+                        fetchStudentLeaveHistory(prn);
+                    } else {
+                        hideHistory();
+                    }
                 });
             }
             if (contactField) {
@@ -1006,26 +1068,54 @@
             return validateEmail() && validatePRN() && validateContact();
         }
 
-        // === Fetch student's previous leaves from spreadsheet ===
-        async function fetchStudentLeaves(prn) {
+        // === Fetch student's previous leaves (history) from spreadsheet ===
+        async function fetchStudentLeaveHistory(prn) {
             if (!prn || prn.length < 9) {
-                leavesInfo.style.display = 'none';
+                hideHistory();
                 return;
             }
             try {
-                const url = `${SCRIPT_URL}?action=getStudentLeaves&prn=${encodeURIComponent(prn)}`;
+                const url = `${SCRIPT_URL}?action=getHistory&prn=${encodeURIComponent(prn)}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                if (data.success && data.totalLeaves !== undefined) {
-                    leavesCountSpan.textContent = data.totalLeaves;
+                if (data.success && Array.isArray(data.leaves)) {
+                    displayLeaveHistory(data.leaves);
+                    // Update total count display
+                    leavesCountSpan.textContent = data.total;
                     leavesInfo.style.display = 'flex';
                 } else {
-                    leavesInfo.style.display = 'none';
+                    hideHistory();
                 }
             } catch (error) {
-                console.error('Error fetching leaves:', error);
-                leavesInfo.style.display = 'none';
+                console.error('Error fetching leave history:', error);
+                hideHistory();
             }
+        }
+
+        function displayLeaveHistory(leaves) {
+            historyTableBody.innerHTML = ''; // clear previous
+            if (leaves.length === 0) {
+                hideHistory();
+                return;
+            }
+
+            leaves.forEach(leave => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${leave.fromDate || ''}</td>
+                    <td>${leave.toDate || ''}</td>
+                    <td>${leave.leaveType || ''}</td>
+                    <td>${leave.status || 'Pending'}</td>
+                `;
+                historyTableBody.appendChild(row);
+            });
+
+            historyContainer.style.display = 'block';
+        }
+
+        function hideHistory() {
+            historyContainer.style.display = 'none';
+            leavesInfo.style.display = 'none';
         }
 
         // === Preview generation (same as before) ===
@@ -1200,7 +1290,6 @@
                 
                 // Automatically download PDF after successful submission
                 setTimeout(() => {
-                    // Use the preview content to generate PDF
                     const previewHTML = generatePreviewHTML(formData);
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = previewHTML;
@@ -1311,7 +1400,7 @@
             }
             clearLeaveDetails();
             setupCurrentYear();
-            leavesInfo.style.display = 'none';
+            hideHistory();
             showMessage('Form has been reset', 'info');
             setTimeout(() => { if (statusMessage) statusMessage.style.display = 'none'; }, 3000);
         }
